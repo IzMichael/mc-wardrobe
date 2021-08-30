@@ -1,0 +1,46 @@
+#titlebar #drag-region {
+    -webkit-app-region: drag;
+}
+
+#window-controls {
+    -webkit-app-region: no-drag;
+}
+
+.wincontrolbutton {
+    padding: 0.75rem;
+    width: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 2.5rem;
+    overflow: hidden;
+    user-select: none;
+    cursor: pointer;
+}
+
+#min-button {
+    font-size: 3rem;
+    font-weight: 200;
+    padding-bottom: 1.1rem;
+}
+
+#restore-button {
+    display: none;
+}
+
+.maximized #titlebar {
+    width: 100%;
+}
+
+.maximized #restore-button {
+    display: flex !important;
+}
+
+.maximized #max-button {
+    display: none;
+}
+
+.wincontrolbutton:hover {
+    background-color: rgba(240, 255, 255, 0.5);
+}

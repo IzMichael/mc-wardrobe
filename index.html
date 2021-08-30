@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>MC Wardrobe</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="./assets/tailwind2.css">
+        <link rel="stylesheet" href="https://resources.izmichael.xyz/assets/tailwind2.css">
+        <link rel="stylesheet" href="./assets/styles.css">
+        <link rel="stylesheet" href="./assets/windowControls.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.49/dist/themes/light.css">
+        <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.49/dist/shoelace.js"></script>
+    </head>
+
+    <body id="body" class="flex flex-col w-full h-screen overflow-hidden">
+        <header id="titlebar" class="flex flex-row items-center justify-between w-full h-10 gap-5 px-3 font-bold text-white bg-gray-600">
+            <img src="./favicon.png" class="w-6 mr-2">
+            <h1 id="drag-region" class="flex flex-row items-center justify-start flex-1 h-full select-none">MC Wardrobe</h1>
+            <div class="flex flex-row gap-2 ustify-end" id="windowControl">
+                <p class="wincontrolbutton" id="min-button">-</p>
+                <p class="wincontrolbutton" id="max-button"> ⃞</p>
+                <p class="wincontrolbutton" id="restore-button">❐</p>
+                <p class="wincontrolbutton" id="close-button">X</p>
+            </div>
+        </header>
+
+        <div id="wrapper" class="flex flex-col items-center justify-start flex-1 hidden w-full p-5 overflow-hidden transition-opacity ease-in-out opacity-0 duration-900">
+            <div class="flex flex-row items-center flex-none w-full mb-5 overflow-hidden">
+                <div id="menu" class="flex flex-row items-center flex-1 overflow-hidden bg-gray-200 rounded-lg justify-evenly">
+                    <p class="menuButton" id="authbtn" onclick="page('auth')">Login</p>
+                    <p class="menuButton" id="builderbtn" onclick="page('builder')">Builder</p>
+                    <p class="menuButton" id="librarybtn" onclick="page('library')">Library</p>
+                    <p class="menuButton" id="settingsbtn" onclick="page('settings')">Settings</p>
+                    <p class="menuButton" id="helpbtn" onclick="page('help')">Help</p>
+                </div>
+            </div>
+            
+            <div id="contentwrapper" class="relative flex flex-row items-center justify-center flex-1 w-full min-h-0">
+                <div id="auth" class="flex flex-col items-center justify-center flex-1 h-full p-3 bg-gray-200 rounded-lg">
+                    <h1 id="new-heading-1" class="hidden text-5xl text-center">Welcome!</h1>
+                    <h3 id="new-heading-2" class="hidden text-2xl text-center">Please sign in below.</h3>
+                    
+                    <h1 id="wb-heading-1" class="text-5xl text-center">Welcome Back, <span id="loggedinusername" class="font-bold"></span></h1>
+                    <h3 id="wb-heading-2" class="text-2xl text-center">You're signed in using: <span id="loggedinemail" class="font-mono"></span>.</h3>
+                    <h5 id="wb-heading-3" class="italic text-center text-md">You only need to sign in below if you want to switch accounts.</h5>
+                    
+                    <div id="login-form" class="flex flex-col items-center justify-center w-1/2 my-5">
+                        <h5 class="italic text-center text-md">Please sign in using your Minecraft Account credentials.</h5>
+                        
+                        <div class="flex flex-row items-center justify-between w-full">
+                            <h3 class="flex-1 mr-5 text-lg italic text-left">Email Address</h3>
+                            <h3 class="flex-1 text-lg italic text-right">Password</h3>
+                        </div>
+                        <div class="flex flex-row items-center justify-between w-full">
+                            <input id="authemail" placeholder="john.doe@email.tld" class="flex-1 p-2 mr-5 text-center bg-transparent border-2 border-gray-400 rounded-md">
+                            <input id="authpassword" placeholder="Password" class="flex-1 p-2 text-center bg-transparent border-2 border-gray-400 rounded-md" type="password">
+                        </div>
+                        <button onclick="auth()" class="w-full p-2 mt-2 bg-green-400 rounded-lg">Auth</button>
+                    </div>
+                    <div id="auth-version"></div>
+                </div>
+                
+                <div id="builder" class="relative flex flex-row items-center justify-center flex-1 hidden h-full max-h-full overflow-hidden bg-gray-200 rounded-lg">
+                    <div id="verticalbar" class="absolute sticky top-0 flex flex-col items-center justify-center w-32 h-full overflow-hidden font-bold">
+                        <div class="flex flex-row items-center justify-center w-full border-b-2 border-gray-700">
+                            <a href="javascript:partspage('main')" class="w-1/2" id="mainparts-btn">Main</a>
+                            <a href="javascript:partspage('outer')" class="w-1/2" id="outerparts-btn">Outer</a>
+                        </div>
+                        
+                        <div id="mainparts-nav" class="flex flex-col items-center justify-center flex-1 w-full">
+                            <a href="javascript:view('main-head')">Heads</a>
+                            <a href="javascript:view('main-torso')">Torsos</a>
+                            <a href="javascript:view('main-l-arm')">Left Arms</a>
+                            <a href="javascript:view('main-r-arm')">Right Arms</a>
+                            <a href="javascript:view('main-l-leg')">Left Legs</a>
+                            <a href="javascript:view('main-r-leg')">Right Legs</a>
+                        </div>
+                        <div id="outerparts-nav" class="flex flex-col items-center justify-center flex-1 hidden w-full">
+                            <a href="javascript:view('outer-head')">Heads</a>
+                            <a href="javascript:view('outer-torso')">Torsos</a>
+                            <a href="javascript:view('outer-l-arm')">Left Arms</a>
+                            <a href="javascript:view('outer-r-arm')">Right Arms</a>
+                            <a href="javascript:view('outer-l-leg')">Left Legs</a>
+                            <a href="javascript:view('outer-r-leg')">Right Legs</a>
+                        </div>
+
+                        <div class="flex flex-col items-center justify-end w-full p-2 text-sm font-normal border-t-2 border-gray-700">
+                            <label id="fileimportbtn" class="w-full p-2 px-3 mb-2 bg-green-400 rounded-lg custom-file-upload">
+                                <input id="file" type="file" multiple>
+                                Import Skins
+                            </label>
+                            <button id="stealerbtn" class="w-full p-2 px-3 bg-green-400 rounded-lg" onclick="page('stealer')">Skin Stealer</button>
+                        </div>
+                    </div>
+                    <div class="flex flex-col justify-start flex-1 h-full bg-gray-300">
+                        <h1 class="w-full p-2 text-3xl font-bold text-center text-white bg-blue-400">Skin Builder</h1>
+                    
+                        <div id="mainparts-display" class="flex flex-col justify-start flex-1 h-full gap-2 p-3 overflow-y-scroll">
+                            <div id="main-head" class="inline-block p-2 mb-2 border-2 border-blue-400">
+                                <div class="flex flex-row items-end justify-between mb-3">
+                                    <h1 class="w-4/5 pb-2 mr-3 text-2xl font-bold text-center border-b-2 border-gray-700">Heads</h1>
+                                    <button class="flex-1 p-2 text-white bg-blue-500 rounded-lg" onclick="blankpart('head','main')">Empty</button>
+                                </div>
+                                <div id="main-head-grid" class="inline-grid w-full grid-cols-9 gap-3"></div>
+                            </div>
+                            <div id="main-torso" class="inline-block p-2 mb-2 border-2 border-blue-400">
+                                <div class="flex flex-row items-end justify-between mb-3">
+                                    <h1 class="w-4/5 pb-2 mr-3 text-2xl font-bold text-center border-b-2 border-gray-700">Torsos</h1>
+                                    <button class="flex-1 p-2 text-white bg-blue-500 rounded-lg" onclick="blankpart('torso','main')">Empty</button>
+                                </div>
+                                <div id="main-torso-grid" class="inline-grid w-full grid-cols-9 gap-3"></div>
+                            </div>
+                            <div id="main-l-arm" class="inline-block p-2 mb-2 border-2 border-blue-400">
+                                <div class="flex flex-row items-end justify-between mb-3">
+                                    <h1 class="w-4/5 pb-2 mr-3 text-2xl font-bold text-center border-b-2 border-gray-700">Left Arms</h1>
+                                    <button class="flex-1 p-2 text-white bg-blue-500 rounded-lg" onclick="blankpart('l-arm','main')">Empty</button>
+                                </div>
+                                <div id="main-l-arm-grid" class="inline-grid w-full grid-cols-9 gap-3"></div>
+                            </div>
+                            <div id="main-r-arm" class="inline-block p-2 mb-2 border-2 border-blue-400">
+                                <div class="flex flex-row items-end justify-between mb-3">
+                                    <h1 class="w-4/5 pb-2 mr-3 text-2xl font-bold text-center border-b-2 border-gray-700">Right Arms</h1>
+                                    <button class="flex-1 p-2 text-white bg-blue-500 rounded-lg" onclick="blankpart('r-arm','main')">Empty</button>
+                                </div>
+                                <div id="main-r-arm-grid" class="inline-grid w-full grid-cols-9 gap-3"></div>
+                            </div>
+                            <div id="main-l-leg" class="inline-block p-2 mb-2 border-2 border-blue-400">
+                                <div class="flex flex-row items-end justify-between mb-3">
+                                    <h1 class="w-4/5 pb-2 mr-3 text-2xl font-bold text-center border-b-2 border-gray-700">Left Legs</h1>
+                                    <button class="flex-1 p-2 text-white bg-blue-500 rounded-lg" onclick="blankpart('l-leg','main')">Empty</button>
+                                </div>
+                                <div id="main-l-leg-grid" class="inline-grid w-full grid-cols-9 gap-3"></div>
+                            </div>
+                            <div id="main-r-leg" class="inline-block p-2 border-2 border-blue-400">
+                                <div class="flex flex-row items-end justify-between mb-3">
+                                    <h1 class="w-4/5 pb-2 mr-3 text-2xl font-bold text-center border-b-2 border-gray-700">Right Legs</h1>
+                                    <button class="flex-1 p-2 text-white bg-blue-500 rounded-lg" onclick="blankpart('r-leg','main')">Empty</button>
+                                </div>
+                                <div id="main-r-leg-grid" class="inline-grid w-full grid-cols-9 gap-3"></div>
+                            </div>
+                        </div>
+                        
+                        <div id="outerparts-display" class="flex flex-col justify-start flex-1 hidden h-full gap-2 p-3 overflow-y-scroll bg-gray-300">
+                            <div id="outer-head" class="inline-block p-2 mb-2 border-2 border-blue-400">
+                                <div class="flex flex-row items-end justify-between mb-3">
+                                    <h1 class="w-4/5 pb-2 mr-3 text-2xl font-bold text-center border-b-2 border-gray-700">Heads</h1>
+                                    <button class="flex-1 p-2 text-white bg-blue-500 rounded-lg" onclick="blankpart('head','outer')">Empty</button>
+                                </div>
+                                <div id="outer-head-grid" class="inline-grid w-full grid-cols-9 gap-3"></div>
+                            </div>
+                            <div id="outer-torso" class="inline-block p-2 mb-2 border-2 border-blue-400">
+                                <div class="flex flex-row items-end justify-between mb-3">
+                                    <h1 class="w-4/5 pb-2 mr-3 text-2xl font-bold text-center border-b-2 border-gray-700">Torsos</h1>
+                                    <button class="flex-1 p-2 text-white bg-blue-500 rounded-lg" onclick="blankpart('torso','outer')">Empty</button>
+                                </div>
+                                <div id="outer-torso-grid" class="inline-grid w-full grid-cols-9 gap-3"></div>
+                            </div>
+                            <div id="outer-l-arm" class="inline-block p-2 mb-2 border-2 border-blue-400">
+                                <div class="flex flex-row items-end justify-between mb-3">
+                                    <h1 class="w-4/5 pb-2 mr-3 text-2xl font-bold text-center border-b-2 border-gray-700">Left Arms</h1>
+                                    <button class="flex-1 p-2 text-white bg-blue-500 rounded-lg" onclick="blankpart('l-arm','outer')">Empty</button>
+                                </div>
+                                <div id="outer-l-arm-grid" class="inline-grid w-full grid-cols-9 gap-3"></div>
+                            </div>
+                            <div id="outer-r-arm" class="inline-block p-2 mb-2 border-2 border-blue-400">
+                                <div class="flex flex-row items-end justify-between mb-3">
+                                    <h1 class="w-4/5 pb-2 mr-3 text-2xl font-bold text-center border-b-2 border-gray-700">Right Arms</h1>
+                                    <button class="flex-1 p-2 text-white bg-blue-500 rounded-lg" onclick="blankpart('r-arm','outer')">Empty</button>
+                                </div>
+                                <div id="outer-r-arm-grid" class="inline-grid w-full grid-cols-9 gap-3"></div>
+                            </div>
+                            <div id="outer-l-leg" class="inline-block p-2 mb-2 border-2 border-blue-400">
+                                <div class="flex flex-row items-end justify-between mb-3">
+                                    <h1 class="w-4/5 pb-2 mr-3 text-2xl font-bold text-center border-b-2 border-gray-700">Left Legs</h1>
+                                    <button class="flex-1 p-2 text-white bg-blue-500 rounded-lg" onclick="blankpart('l-leg','outer')">Empty</button>
+                                </div>
+                                <div id="outer-l-leg-grid" class="inline-grid w-full grid-cols-9 gap-3"></div>
+                            </div>
+                            <div id="outer-r-leg" class="inline-block p-2 border-2 border-blue-400">
+                                <div class="flex flex-row items-end justify-between mb-3">
+                                    <h1 class="w-4/5 pb-2 mr-3 text-2xl font-bold text-center border-b-2 border-gray-700">Right Legs</h1>
+                                    <button class="flex-1 p-2 text-white bg-blue-500 rounded-lg" onclick="blankpart('r-leg','outer')">Empty</button>
+                                </div>
+                                <div id="outer-r-leg-grid" class="inline-grid w-full grid-cols-9 gap-3"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="importing" class="absolute bottom-0 left-0 flex flex-col items-center justify-center flex-1 hidden w-0 h-0 overflow-hidden transition-all ease-in-out bg-gray-200 rounded-lg select-none duration-long">
+                        <div class="flex flex-col items-center justify-center w-1/2 overflow-hidden h-1/2">
+                            <h1 class="text-2xl">Skins are importing...</h1>
+
+                            <sl-progress-ring id="filebar" class="overflow-hidden transition-all ease-in-out bg-gray-200 rounded-full text-md duration-900"></sl-progress-ring>
+                            <sl-progress-bar id="filetotalbar" style="--height: 1rem; width: 256px;" class="w-full mt-2 overflow-hidden transition-all ease-in-out bg-gray-200 rounded-full duration-900"></sl-progress-bar>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="library" class="flex flex-col items-center justify-start flex-1 hidden h-full max-h-full p-3 bg-gray-200 rounded-lg">
+                    <h1 class="w-full p-2 mb-3 text-3xl font-bold text-center text-white bg-blue-400">Outfit Library</h1>
+                    <div id="librarylist" class="grid w-full grid-cols-5 gap-5 overflow-y-scroll"></div>
+                </div>
+
+                <div id="settings" class="flex flex-col items-center justify-start flex-1 hidden h-full max-h-full p-3 bg-gray-200 rounded-lg">
+                    <h1 class="w-full p-2 mb-3 text-3xl font-bold text-center text-white bg-blue-400">Settings</h1>
+                    
+                    <div class="inline-block w-full p-3 mb-3">
+                        <h3 class="text-xl text-center">You're signed in as <span id="loggedinusername2" class="font-bold"></span>. <a href="javascript:logout()" class="underline">Log Out</a></h3>
+                    </div>
+
+                    <div class="inline-block w-full p-3 mb-3">
+                        <h1 class="w-full pb-2 mb-3 text-2xl font-bold text-center border-b-2 border-gray-700">Clear Data</h1>
+                        <div class="flex flex-row items-center justify-between w-full">
+                            <button class="flex-1 p-2 px-3 mr-3 bg-red-400 rounded-lg" onclick="document.getElementById('confirmdeleteallparts').classList.remove('hidden');">Delete All Parts</button>
+                            <button class="flex-1 p-2 px-3 bg-red-400 rounded-lg" onclick="document.getElementById('confirmdeletealloutfits').classList.remove('hidden');">Delete All Outfits</button>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-start w-full p-3 mb-3">
+                        <h1 class="w-full pb-2 mb-3 text-2xl font-bold text-center border-b-2 border-gray-700">Updates</h1>
+                        <div id="settings-version" class="text-xl"></div>
+                        <a id="updatebtn" href="https://github.com/IzMichael/mc-wardrobe/releases/latest" class="hidden w-1/2 p-2 px-3 mx-auto text-center bg-green-400 rounded-lg external-link">Please download the latest version</a>
+                    </div>
+
+                    <a href="https://izmichael.xyz" class="w-full p-3 text-xl text-center underline justify-self-end external-link">&copy; IzMichael 2021</a>
+                </div>
+
+                <div id="help" class="flex flex-col items-center justify-start flex-1 hidden h-full max-h-full p-3 bg-gray-200 rounded-lg">
+                    <h1 class="w-full p-2 mb-3 text-3xl font-bold text-center text-white bg-blue-400">Help</h1>
+                    <iframe src="https://www.youtube.com/embed/kG4cxuBCxRA?rel=0" class="w-full" width="1920" height="1080" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+                    <p class="mt-2 text-xl"><a href="https://github.com/IzMichael/mc-wardrobe/issues" class="underline external-link">Found a Bug? Want to Suggest a Feature?</a> - <a href="https://github.com/IzMichael/mc-wardrobe/discussions" class="underline external-link">Need Help? Want to Show-Off a Skin?</a></p>
+                </div>
+
+                <div id="stealer" class="flex flex-row items-center justify-start flex-1 hidden h-full max-h-full p-3 bg-gray-200 rounded-lg">
+                    <div class="flex flex-col items-center justify-around flex-1 mx-16 mr-32 h-1/2">
+                        <h1 class="text-2xl">Skin Stealer</h1>
+                        <input id="stealer-input" class="w-full p-2 text-center bg-transparent border-2 border-gray-400 rounded-md">
+                        <button onclick="getsteal()" class="w-1/2 p-2 px-3 bg-green-400 rounded-lg">Steal!</button>
+                        <button onclick="runsteal()" class="w-1/2 p-2 px-3 bg-green-400 rounded-lg">Import Skin</button>
+                    </div>
+                    <img class="w-1/4 mr-5" src="https://crafatar.com/renders/body/c06f8906-4c8a-4911-9c29-ea1dbd1aab82.png" id="stealer-output">
+                </div>
+
+                <!-- Persistent Sidebar -->
+
+                <div class="flex flex-col items-center justify-between h-full ml-5 overflow-hidden bg-gray-200 rounded-lg">
+                    <div class="flex flex-col items-center justify-center w-full mb-3 border-b-2 border-gray-700">
+                        <canvas id="skin_container" class="m-3"></canvas>
+                    </div>
+
+                    <canvas id="canvas" width="64" height="64"></canvas>
+                    
+                    <div id="sidebar-buttons" class="flex flex-col items-center justify-end w-full p-3 mt-3 overflow-hidden transition-all duration-1000 ease-in-out border-t-2 border-gray-700">
+                        <progress id="uploadbar" value="0" max="2" class="w-full h-0 transition-all duration-300 ease-in-out rounded-lg"></progress>
+                        <input id="outfitname" class="h-0 overflow-hidden text-center bg-transparent border-gray-400 rounded-md">
+                        
+                        <button onclick="nameoutfit()" class="w-full p-2 px-3 bg-green-400 rounded-lg" id="saveoutfit-btn">Save Outfit</button>
+                        
+                        <div class="flex flex-row items-center justify-between w-full mt-1">
+                            <button onclick="useskin()" class="flex-1 p-2 px-3 bg-green-400 rounded-lg">Use Skin</button>
+                            <button onclick="exportskin()" class="flex-1 p-2 px-3 ml-1 bg-green-400 rounded-lg">Export Skin</button>
+                        </div>
+                        <a href="https://izmichael.xyz" class="flex-1 mt-1 text-center underline text-md justify-self-end external-link">&copy; IzMichael 2021 - izmichael.xyz</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="confirmdeletepart" class="absolute top-0 left-0 flex flex-col items-center justify-center hidden w-screen h-screen">
+            <div class="flex flex-col items-center justify-center p-5 bg-white border-2 border-gray-700 rounded-lg shadow-2xl">
+                <h1 class="text-3xl font-bold">Are you sure you want to delete this part?</h1>
+                <div class="flex flex-row items-center justify-between mt-5">
+                    <button class="p-2 px-3 mr-5 bg-red-400 rounded-lg" id="confirmdeletepartbtn">Confirm</button>
+                    <button class="p-2 px-3 bg-green-400 rounded-lg" onclick="document.getElementById('confirmdeletepart').classList.add('hidden');">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="confirmdeleteoutfit" class="absolute top-0 left-0 flex flex-col items-center justify-center hidden w-screen h-screen">
+            <div class="flex flex-col items-center justify-center p-5 bg-white border-2 border-gray-700 rounded-lg shadow-2xl">
+                <h1 class="text-3xl font-bold">Are you sure you want to delete this outfit?</h1>
+                <div class="flex flex-row items-center justify-between mt-5">
+                    <button class="p-2 px-3 mr-5 bg-red-400 rounded-lg" id="confirmdeleteoutfitbtn">Confirm</button>
+                    <button class="p-2 px-3 bg-green-400 rounded-lg" onclick="document.getElementById('confirmdeleteoutfit').classList.add('hidden');">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="confirmdeleteallparts" class="absolute top-0 left-0 flex flex-col items-center justify-center hidden w-screen h-screen">
+            <div class="flex flex-col items-center justify-center p-5 bg-white border-2 border-gray-700 rounded-lg shadow-2xl">
+                <h1 class="text-3xl font-bold">Are you sure you want to delete all parts?</h1>
+                <div class="flex flex-row items-center justify-between mt-5">
+                    <button class="p-2 px-3 mr-5 bg-red-400 rounded-lg" onclick="resetparts()">Confirm</button>
+                    <button class="p-2 px-3 bg-green-400 rounded-lg" onclick="document.getElementById('confirmdeleteallparts').classList.add('hidden');">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="confirmdeletealloutfits" class="absolute top-0 left-0 flex flex-col items-center justify-center hidden w-screen h-screen">
+            <div class="flex flex-col items-center justify-center p-5 bg-white border-2 border-gray-700 rounded-lg shadow-2xl">
+                <h1 class="text-3xl font-bold">Are you sure you want to delete all outfits?</h1>
+                <div class="flex flex-row items-center justify-between mt-5">
+                    <button class="p-2 px-3 mr-5 bg-red-400 rounded-lg" onclick="resetoutfits()">Confirm</button>
+                    <button class="p-2 px-3 bg-green-400 rounded-lg" onclick="document.getElementById('confirmdeletealloutfits').classList.add('hidden');">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <img id="skin" class="hidden">
+        <canvas id="pngrendercanvas" class="hidden"></canvas>
+
+        <script src="./windowControls.js"></script>
+        <script src="./assets/js/skinview3d.bundle.js"></script>
+        <script src="./assets/js/main.js"></script>
+    </body>
+
+</html>

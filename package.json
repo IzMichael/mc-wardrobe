@@ -1,0 +1,24 @@
+{
+  "name": "mc-wardrobe",
+  "version": "1.0.0",
+  "description": "A skin builder and library for Minecraft. Built with Node and Electron.",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron .",
+    "package": "electron-packager . --overwrite --icon=./favicon.png --out=./releases --platform=win32 --arch=x64 --prune=true",
+    "interactive": "epi"
+  },
+  "repository": "https://github.com/IzMichael/mc-wardrobe",
+  "homepage": "https://github.com/IzMichael/mc-wardrobe",
+  "author": "IzMichael",
+  "devDependencies": {
+    "electron": "^8.5.2",
+    "electron-packager": "^15.2.0"
+  },
+  "dependencies": {
+    "asar": "^3.0.3",
+    "minecraft-skin": "^0.1.2",
+    "mojang": "^2.2.2",
+    "skinview3d": "^2.0.0"
+  }
+}
