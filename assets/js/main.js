@@ -307,6 +307,8 @@ async function msAuth(msaccess) {
 
     authdata = req8
 
+    document.getElementById('username').innerHTML = req8.name;
+
     let textures = await fetch('https://sessionserver.mojang.com/session/minecraft/profile/' + authdata.id).then(data => data.json()).then(res => {
             return res.properties[0].value
         })
