@@ -1,8 +1,8 @@
-const fs = require('fs');
+// const fs = require('fs');
 
 // Universal Variables
 
-const storage = datadir;
+const storage = 'datadir';
 
 const partsfile = storage + '/parts.json';
 const outfitsfile = storage + '/outfits.json';
@@ -135,41 +135,35 @@ versioning()
 
 async function init() {
     // Parts
-    fs.access(partsfile, fs.F_OK, (err) => {
-        if (err) {
-            fs.writeFileSync(partsfile, JSON.stringify({
-                'main': {
-                    'head': [],
-                    'torso': [],
-                    'r-arm': [],
-                    'l-arm': [],
-                    'r-leg': [],
-                    'l-leg': []
-                },
+    if (!window.localStorage.getItem('parts')) {
+        window.localStorage.setItem('parts', JSON.stringify({
+            'main': {
+                'head': [],
+                'torso': [],
+                'r-arm': [],
+                'l-arm': [],
+                'r-leg': [],
+                'l-leg': []
+            },
 
-                'outer': {
-                    'head': [],
-                    'torso': [],
-                    'r-arm': [],
-                    'l-arm': [],
-                    'r-leg': [],
-                    'l-leg': []
-                }
-            }));
-            return
-        }
-    });
+            'outer': {
+                'head': [],
+                'torso': [],
+                'r-arm': [],
+                'l-arm': [],
+                'r-leg': [],
+                'l-leg': []
+            }
+        }));
+    };
 
     // Outfits
-    fs.access(outfitsfile, fs.F_OK, (err) => {
-        if (err) {
-            fs.writeFileSync(outfitsfile, JSON.stringify({
-                'namelist': [],
-                'fulllist': []
-            }));
-            return
-        }
-    });
+    if (!window.localStorage.getItem('outfits')) {
+        window.localStorage.setItem('outfits', JSON.stringify({
+            'namelist': [],
+            'fulllist': []
+        }));
+    }
 
     // Skin Viewer
 
@@ -189,19 +183,13 @@ async function init() {
 
     await sleep(1)
 
-    parts = JSON.parse(fs.readFileSync(partsfile, {
-        encoding: 'utf8',
-        flag: 'r'
-    }));
+    parts = JSON.parse(window.localStorage.getItem('parts'));
 
     await sleep(0.5)
 
     listparts();
 
-    outfits = JSON.parse(fs.readFileSync(outfitsfile, {
-        encoding: 'utf8',
-        flag: 'r'
-    }));
+    outfits = JSON.parse(window.localStorage.getItem('outfits'));
 
     await sleep(0.5)
 
@@ -213,13 +201,13 @@ init()
 // Pages
 
 var buttons = true;
-page('auth');
+page('home');
 
 async function page(id) {
     document.getElementById('wrapper').classList.remove('hidden')
     if (buttons) {
-        if (signedin || id == 'auth') {
-            const pages = ['auth', 'builder', 'library', 'settings', 'help', 'stealer'];
+        // if (signedin || id == 'auth') {
+            const pages = ['home', 'builder', 'library', 'settings', 'help', 'stealer'];
 
             for (let i = 0; i < pages.length; i++) {
                 const page = pages[i];
@@ -229,7 +217,7 @@ async function page(id) {
 
             document.getElementById(id).classList.remove('hidden');
             document.getElementById(id + 'btn').classList.add('selected');
-        }
+        // }
     }
     await sleep(1)
     document.getElementById('wrapper').classList.remove('opacity-0');
@@ -237,108 +225,95 @@ async function page(id) {
 
 // API Authentication
 
-const mojang = require('mojang');
-
-auth()
+// auth()
 if (authdata) {
-    document.getElementById('loggedinusername').innerHTML = authdata.selectedProfile.name;
-    document.getElementById('loggedinusername2').innerHTML = authdata.selectedProfile.name;
+    document.getElementById('loggedinusername').innerHTML = authdata.name;
+    document.getElementById('loggedinusername2').innerHTML = authdata.name;
     document.getElementById('loggedinemail').innerHTML = authdata.user.username;
 }
 
-async function auth() {
-    var username = document.getElementById('authemail').value;
-    var password = document.getElementById('authpassword').value;
+async function msAuth(msaccess) {
+    // Step 4
+    var req4 = await fetch('https://user.auth.xboxlive.com/user/authenticate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            'Properties': {
+                'AuthMethod': 'RPS',
+                'SiteName': 'user.auth.xboxlive.com',
+                'RpsTicket': 'd=' + msaccess
+            },
+            'RelyingParty': 'http://auth.xboxlive.com',
+            'TokenType': 'JWT'
+        })
+    }).then(res => {return res.json()});
 
-    var token;
-    const agent = {
-        name: 'Minecraft',
-        version: 1
-    };
+    // Step 5
+    var req5 = await fetch('https://xsts.auth.xboxlive.com/xsts/authorize', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            'Properties': {
+                'SandboxId': 'RETAIL',
+                'UserTokens': [
+                    req4.Token
+                ]
+            },
+            'RelyingParty': 'rp://api.minecraftservices.com/',
+            'TokenType': 'JWT'
+        })
+    }).then(res => {return res.json()});
 
-    let status;
+    // Step 6
+    var req6 = await fetch('https://api.minecraftservices.com/authentication/login_with_xbox', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Origin': 'http://localhost:5500/'
+        },
+        body: JSON.stringify({
+            'identityToken': `XBL3.0 x=${req5.DisplayClaims.xui[0].uhs};${req5.Token}`
+        })
+    }).then(res => {return res.json()});
 
-    if (!authdata && username == '') {
-        document.getElementById('wb-heading-1').classList.add('hidden');
-        document.getElementById('wb-heading-2').classList.add('hidden');
-        document.getElementById('wb-heading-3').classList.add('hidden');
+    // Step 7
+    var req7 = await fetch('https://api.minecraftservices.com/entitlements/mcstore', {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + req6.access_token
+        }
+    }).then(res => {return res.json()});
 
-        document.getElementById('new-heading-1').classList.remove('hidden');
-        document.getElementById('new-heading-2').classList.remove('hidden');
+    if (req7.items.length < 0) {
+        console.error('User does not own Minecraft Java')
         return
     }
 
-    if (authdata && username == '') {
-        signedin = true;
-    } else {
-        signedin = false
-    }
+    // Step 8
 
-    // Get Token
-    if (signedin == false && username && password) {
-        fetch('https://authserver.mojang.com/authenticate', {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                method: 'POST',
-                body: JSON.stringify({
-                    'agent': agent,
-                    'username': username,
-                    'password': password
-                })
-            })
-            .then(data => data.json())
-            .then(response => {
-                if (response.error) {
-                    status = false
-                } else {
-                    status = true
-                    token = response.clientToken
-                }
-                console.log(status)
-            });
-    } else {
-        token = authdata.accessToken;
-    }
-
-    await sleep(1)
-
-    if (status == false && signedin == false) {
-        console.log('failed')
-    } else {
-        if (!signedin) {
-            const session = await mojang.authenticate({
-                username,
-                password,
-                token,
-                agent
-            })
-            authdata = session
-            localStorage.setItem('authdata', JSON.stringify(authdata));
-
-            signedin = true;
+    var req8 = await fetch('https://api.minecraftservices.com/minecraft/profile', {
+        headers: {
+            'Authorization': 'Bearer ' + req6.access_token
         }
+    }).then(res => {return res.json()});
 
-        document.getElementById('authemail').value = '';
-        document.getElementById('authpassword').value = '';
+    authdata = req8
 
-        document.getElementById('loggedinusername').innerHTML = authdata.selectedProfile.name;
-        document.getElementById('loggedinusername2').innerHTML = authdata.selectedProfile.name;
-        document.getElementById('loggedinemail').innerHTML = authdata.user.username;
-
-        document.getElementById('new-heading-1').classList.add('hidden');
-        document.getElementById('new-heading-2').classList.add('hidden');
-
-        document.getElementById('wb-heading-1').classList.remove('hidden');
-        document.getElementById('wb-heading-2').classList.remove('hidden');
-        document.getElementById('wb-heading-3').classList.remove('hidden');
-
-        let textures = await fetch('https://sessionserver.mojang.com/session/minecraft/profile/' + authdata.selectedProfile.id).then(data => data.json()).then(res => {
+    let textures = await fetch('https://sessionserver.mojang.com/session/minecraft/profile/' + authdata.id).then(data => data.json()).then(res => {
             return res.properties[0].value
         })
-        let skin = JSON.parse(atob(textures)).textures.SKIN.url;
-        render(skin);
-    }
+    let skin = JSON.parse(atob(textures)).textures.SKIN.url;
+    render(skin);
+
+    console.log(req8)
 }
 
 function logout() {
@@ -469,7 +444,7 @@ async function deconstructskin(path) {
 
     await sleep(5)
 
-    fs.writeFileSync(partsfile, JSON.stringify(parts));
+    window.localStorage.setItem('parts', JSON.stringify(parts));
     listparts()
     return
 }
@@ -483,7 +458,7 @@ function deletepart(type, layer, index) {
 
 async function confirmdeletepart(type, layer, index) {
     parts[layer][type].splice(index, 1);
-    fs.writeFileSync(partsfile, JSON.stringify(parts));
+    window.localStorage.setItem('parts', JSON.stringify(parts));
     listparts();
     document.getElementById('confirmdeletepart').classList.add('hidden');
 }
@@ -547,7 +522,7 @@ function deleteoutfit(index) {
 async function confirmdeleteoutfit(index) {
     outfits.namelist.splice(index, 1);
     outfits.fulllist.splice(index, 1);
-    fs.writeFileSync(outfitsfile, JSON.stringify(outfits));
+    window.localStorage.setItem('outfits', JSON.stringify(outfits));
     listoutfits();
     document.getElementById('confirmdeleteoutfit').classList.add('hidden');
 }
@@ -579,7 +554,7 @@ async function saveoutfit() {
         })
     }
 
-    fs.writeFileSync(outfitsfile, JSON.stringify(outfits));
+    window.localStorage.setItem('outfits', JSON.stringify(outfits));
     listoutfits()
 
     document.getElementById('outfitname').classList.add('h-0');
@@ -803,7 +778,7 @@ async function resetparts() {
             'l-leg': []
         }
     };
-    fs.writeFileSync(partsfile, JSON.stringify(parts));
+    window.localStorage.setItem('parts', JSON.stringify(parts));
     init()
     document.getElementById('confirmdeleteallparts').classList.add('hidden');
 }
@@ -813,7 +788,7 @@ async function resetoutfits() {
         'namelist': [],
         'fulllist': []
     };
-    fs.writeFileSync(outfitsfile, JSON.stringify(outfits));
+    window.localStorage.setItem('outfits', JSON.stringify(outfits));
     init()
     document.getElementById('confirmdeletealloutfits').classList.add('hidden');
 }
@@ -967,17 +942,17 @@ function scaleImage(imageData, context, dx, dy, scale) {
 
 // Version Control
 
-const packagejson = require('./package.json')
+const packagejson = {'version':'1.0.0'}
 
 const version = 'v' + packagejson.version;
 
 async function versioning() {
-    const authtext = document.getElementById('auth-version');
+    const authtext = document.getElementById('home-version');
     const settingstext = document.getElementById('settings-version');
     fetch('https://api.github.com/repos/IzMichael/mc-wardrobe/releases/latest')
         .then(response => response.json())
         .then(data => {
-            if (packagejson.version >= data.tag_name) {
+            if (version >= data.tag_name) {
                 authtext.innerHTML = 'You are on the latest version, Version ' + version
                 settingstext.innerHTML = 'You are on the latest version, Version ' + version
             } else {

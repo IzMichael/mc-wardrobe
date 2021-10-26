@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>MC Wardrobe</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="./assets/tailwind2.css">
+        <link rel="stylesheet" href="https://resources.izmichael.xyz/assets/tailwind2.css">
+        <link rel="stylesheet" href="./assets/styles.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.49/dist/themes/light.css">
+        <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.49/dist/shoelace.js"></script>
+    </head>
+
+    <body id="body" class="flex flex-col w-full h-screen overflow-hidden">
+        <a href="https://login.live.com/oauth20_authorize.srf?client_id=b2d23339-1d4d-4d72-9b87-b976de58ad69&response_type=code&redirect_uri=http://localhost:5500/auth/&scope=XboxLive.signin offline_access&state=mcwardrobe">Auth Link</a>
+
+        <script>
+            console.log(window.location.search.split('=')[1].split('&')[0])
+
+            var urlencoded = new URLSearchParams();
+            urlencoded.append('client_id', 'b2d23339-1d4d-4d72-9b87-b976de58ad69');
+            urlencoded.append('client_secret', 'zMl7Q~ru63xwouhfdKQOqebEcELtf5vF4nQOG');
+            urlencoded.append('code', window.location.search.split('=')[1].split('&')[0]);
+            urlencoded.append('grant_type', 'authorization_code');
+            urlencoded.append('redirect_uri', 'http://localhost:5500/auth/');
+
+            var requestOptions = {
+                method: 'POST',
+                headers: {'Content-Type':'application/x-www-form-urlencoded','Origin':'http://localhost:5500/auth/'},
+                body: urlencoded,
+                redirect: 'follow'
+            };
+
+            fetch('https://login.live.com/oauth20_token.srf', requestOptions)
+                .then(response => response.json())
+                .then(result => console.log(result))
+                .catch(error => console.log('error', error));
+        </script>
+    </body>
+
+</html>

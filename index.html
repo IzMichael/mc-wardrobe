@@ -8,57 +8,89 @@
         <link rel="stylesheet" href="./assets/tailwind2.css">
         <link rel="stylesheet" href="https://resources.izmichael.xyz/assets/tailwind2.css">
         <link rel="stylesheet" href="./assets/styles.css">
-        <link rel="stylesheet" href="./assets/windowControls.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.49/dist/themes/light.css">
         <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.49/dist/shoelace.js"></script>
+        
+        <script src="./assets/js/msal.min.js"></script>
+        <script src="./assets/js/signin.js"></script>
+        <script src="./assets/js/jwt_decoder.js"></script>
     </head>
 
     <body id="body" class="flex flex-col w-full h-screen overflow-hidden">
-        <header id="titlebar" class="flex flex-row items-center justify-between w-full h-10 gap-5 px-3 font-bold text-white bg-gray-600">
-            <img src="./favicon.png" class="w-6 mr-2">
-            <h1 id="drag-region" class="flex flex-row items-center justify-start flex-1 h-full select-none">MC Wardrobe</h1>
-            <div class="flex flex-row gap-2 ustify-end" id="windowControl">
-                <p class="wincontrolbutton" id="min-button">-</p>
-                <p class="wincontrolbutton" id="max-button"> ⃞</p>
-                <p class="wincontrolbutton" id="restore-button">❐</p>
-                <p class="wincontrolbutton" id="close-button">X</p>
-            </div>
-        </header>
-
         <div id="wrapper" class="flex flex-col items-center justify-start flex-1 hidden w-full p-5 overflow-hidden transition-opacity ease-in-out opacity-0 duration-900">
             <div class="flex flex-row items-center flex-none w-full mb-5 overflow-hidden">
                 <div id="menu" class="flex flex-row items-center flex-1 overflow-hidden bg-gray-200 rounded-lg justify-evenly">
-                    <p class="menuButton" id="authbtn" onclick="page('auth')">Login</p>
+                    <div class="flex flex-col items-center justify-center flex-1 h-full p-3 border-r border-black select-none">
+                        <p class="flex-1 font-bold font-stnd" id="username">IzMichael</p>
+                        <a class="flex-1 font-bold font-stnd" onclick="sign_in()">Sign In</a>
+                    </div>
+                    <p class="menuButton" id="homebtn" onclick="page('home')">Home</p>
                     <p class="menuButton" id="builderbtn" onclick="page('builder')">Builder</p>
                     <p class="menuButton" id="librarybtn" onclick="page('library')">Library</p>
                     <p class="menuButton" id="settingsbtn" onclick="page('settings')">Settings</p>
                     <p class="menuButton" id="helpbtn" onclick="page('help')">Help</p>
                 </div>
             </div>
+
+            <div class="hidden">
+                <div id="id_token_container" hidden>
+                    <h2>ID Token</h2>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h3>Raw JWT</h3>
+                            <p id="jwt_raw_id" class="token"></p>
+                        </div>
+                        <div class="col-md-8">
+                            <h3>JWT Decoded Output</h3>
+                            <div id="jwt_decoded_output_id">
+                                <div id="message_id"></div>
+                                <h4>Header</h4>
+                                <div id="header_id" class="jwt token"></div>
+                                <br />
+                                <h4>Payload</h4>
+                                <div id="payload_id" class="jwt token"></div>
+                                <br />
+                                <h4>Signature</h4>
+                                <div id="signature_id" class="token"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <br>
+                <div id="access_token_container" hidden>
+                    <h2>Access Token</h2>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h3>Raw JWT</h3>
+                            <p id="jwt_raw_access" class="token"></p>
+                        </div>
+                        <div class="col-md-8">
+                            <h3>JWT Decoded Output</h3>
+                            <div id="jwt_decoded_output_access">
+                                <div id="message_access"></div>
+                                <h4>Header</h4>
+                                <div id="header_access" class="jwt token"></div>
+                                <br />
+                                <h4>Payload</h4>
+                                <div id="payload_access" class="jwt token"></div>
+                                <br />
+                                <h4>Signature</h4>
+                                <div id="signature_access" class="token"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
             <div id="contentwrapper" class="relative flex flex-row items-center justify-center flex-1 w-full min-h-0">
-                <div id="auth" class="flex flex-col items-center justify-center flex-1 h-full p-3 bg-gray-200 rounded-lg">
-                    <h1 id="new-heading-1" class="hidden text-5xl text-center">Welcome!</h1>
-                    <h3 id="new-heading-2" class="hidden text-2xl text-center">Please sign in below.</h3>
-                    
-                    <h1 id="wb-heading-1" class="text-5xl text-center">Welcome Back, <span id="loggedinusername" class="font-bold"></span></h1>
-                    <h3 id="wb-heading-2" class="text-2xl text-center">You're signed in using: <span id="loggedinemail" class="font-mono"></span>.</h3>
-                    <h5 id="wb-heading-3" class="italic text-center text-md">You only need to sign in below if you want to switch accounts.</h5>
-                    
-                    <div id="login-form" class="flex flex-col items-center justify-center w-1/2 my-5">
-                        <h5 class="italic text-center text-md">Please sign in using your Minecraft Account credentials.</h5>
-                        
-                        <div class="flex flex-row items-center justify-between w-full">
-                            <h3 class="flex-1 mr-5 text-lg italic text-left">Email Address</h3>
-                            <h3 class="flex-1 text-lg italic text-right">Password</h3>
-                        </div>
-                        <div class="flex flex-row items-center justify-between w-full">
-                            <input id="authemail" placeholder="john.doe@email.tld" class="flex-1 p-2 mr-5 text-center bg-transparent border-2 border-gray-400 rounded-md">
-                            <input id="authpassword" placeholder="Password" class="flex-1 p-2 text-center bg-transparent border-2 border-gray-400 rounded-md" type="password">
-                        </div>
-                        <button onclick="auth()" class="w-full p-2 mt-2 bg-green-400 rounded-lg">Auth</button>
-                    </div>
-                    <div id="auth-version"></div>
+                <div id="home" class="flex flex-col items-center justify-center flex-1 h-full p-3 bg-gray-200 rounded-lg">
+                    <h1 class="text-5xl text-center">Welcome!</h1>
+                    <h3 class="text-2xl text-center">Please sign in below.</h3>
+
+                    <div id="home-version"></div>
                 </div>
                 
                 <div id="builder" class="relative flex flex-row items-center justify-center flex-1 hidden h-full max-h-full overflow-hidden bg-gray-200 rounded-lg">
@@ -310,7 +342,6 @@
         <img id="skin" class="hidden">
         <canvas id="pngrendercanvas" class="hidden"></canvas>
 
-        <script src="./windowControls.js"></script>
         <script src="./assets/js/skinview3d.bundle.js"></script>
         <script src="./assets/js/main.js"></script>
     </body>
