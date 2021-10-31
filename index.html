@@ -8,57 +8,84 @@
         <link rel="stylesheet" href="./assets/tailwind2.css">
         <link rel="stylesheet" href="https://resources.izmichael.xyz/assets/tailwind2.css">
         <link rel="stylesheet" href="./assets/styles.css">
-        <link rel="stylesheet" href="./assets/windowControls.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.49/dist/themes/light.css">
         <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.49/dist/shoelace.js"></script>
     </head>
 
     <body id="body" class="flex flex-col w-full h-screen overflow-hidden">
-        <header id="titlebar" class="flex flex-row items-center justify-between w-full h-10 gap-5 px-3 font-bold text-white bg-gray-600">
-            <img src="./favicon.png" class="w-6 mr-2">
-            <h1 id="drag-region" class="flex flex-row items-center justify-start flex-1 h-full select-none">MC Wardrobe</h1>
-            <div class="flex flex-row gap-2 ustify-end" id="windowControl">
-                <p class="wincontrolbutton" id="min-button">-</p>
-                <p class="wincontrolbutton" id="max-button"> ⃞</p>
-                <p class="wincontrolbutton" id="restore-button">❐</p>
-                <p class="wincontrolbutton" id="close-button">X</p>
-            </div>
-        </header>
-
         <div id="wrapper" class="flex flex-col items-center justify-start flex-1 hidden w-full p-5 overflow-hidden transition-opacity ease-in-out opacity-0 duration-900">
             <div class="flex flex-row items-center flex-none w-full mb-5 overflow-hidden">
                 <div id="menu" class="flex flex-row items-center flex-1 overflow-hidden bg-gray-200 rounded-lg justify-evenly">
-                    <p class="menuButton" id="authbtn" onclick="page('auth')">Login</p>
+                    <p class="menuButton" id="homebtn" onclick="page('home')">Home</p>
                     <p class="menuButton" id="builderbtn" onclick="page('builder')">Builder</p>
                     <p class="menuButton" id="librarybtn" onclick="page('library')">Library</p>
                     <p class="menuButton" id="settingsbtn" onclick="page('settings')">Settings</p>
-                    <p class="menuButton" id="helpbtn" onclick="page('help')">Help</p>
+                    <!-- <p class="menuButton" id="helpbtn" onclick="page('help')">Help</p> -->
+                </div>
+            </div>
+
+            <div class="hidden">
+                <div id="id_token_container" hidden>
+                    <h2>ID Token</h2>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h3>Raw JWT</h3>
+                            <p id="jwt_raw_id" class="token"></p>
+                        </div>
+                        <div class="col-md-8">
+                            <h3>JWT Decoded Output</h3>
+                            <div id="jwt_decoded_output_id">
+                                <div id="message_id"></div>
+                                <h4>Header</h4>
+                                <div id="header_id" class="jwt token"></div>
+                                <br />
+                                <h4>Payload</h4>
+                                <div id="payload_id" class="jwt token"></div>
+                                <br />
+                                <h4>Signature</h4>
+                                <div id="signature_id" class="token"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <br>
+                <div id="access_token_container" hidden>
+                    <h2>Access Token</h2>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h3>Raw JWT</h3>
+                            <p id="jwt_raw_access" class="token"></p>
+                        </div>
+                        <div class="col-md-8">
+                            <h3>JWT Decoded Output</h3>
+                            <div id="jwt_decoded_output_access">
+                                <div id="message_access"></div>
+                                <h4>Header</h4>
+                                <div id="header_access" class="jwt token"></div>
+                                <br />
+                                <h4>Payload</h4>
+                                <div id="payload_access" class="jwt token"></div>
+                                <br />
+                                <h4>Signature</h4>
+                                <div id="signature_access" class="token"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <div id="contentwrapper" class="relative flex flex-row items-center justify-center flex-1 w-full min-h-0">
-                <div id="auth" class="flex flex-col items-center justify-center flex-1 h-full p-3 bg-gray-200 rounded-lg">
-                    <h1 id="new-heading-1" class="hidden text-5xl text-center">Welcome!</h1>
-                    <h3 id="new-heading-2" class="hidden text-2xl text-center">Please sign in below.</h3>
-                    
-                    <h1 id="wb-heading-1" class="text-5xl text-center">Welcome Back, <span id="loggedinusername" class="font-bold"></span></h1>
-                    <h3 id="wb-heading-2" class="text-2xl text-center">You're signed in using: <span id="loggedinemail" class="font-mono"></span>.</h3>
-                    <h5 id="wb-heading-3" class="italic text-center text-md">You only need to sign in below if you want to switch accounts.</h5>
-                    
-                    <div id="login-form" class="flex flex-col items-center justify-center w-1/2 my-5">
-                        <h5 class="italic text-center text-md">Please sign in using your Minecraft Account credentials.</h5>
-                        
-                        <div class="flex flex-row items-center justify-between w-full">
-                            <h3 class="flex-1 mr-5 text-lg italic text-left">Email Address</h3>
-                            <h3 class="flex-1 text-lg italic text-right">Password</h3>
-                        </div>
-                        <div class="flex flex-row items-center justify-between w-full">
-                            <input id="authemail" placeholder="john.doe@email.tld" class="flex-1 p-2 mr-5 text-center bg-transparent border-2 border-gray-400 rounded-md">
-                            <input id="authpassword" placeholder="Password" class="flex-1 p-2 text-center bg-transparent border-2 border-gray-400 rounded-md" type="password">
-                        </div>
-                        <button onclick="auth()" class="w-full p-2 mt-2 bg-green-400 rounded-lg">Auth</button>
+                <div id="home" class="flex flex-col items-center justify-center flex-1 h-full p-3 bg-gray-200 rounded-lg">
+                    <div class="flex flex-row items-center justify-center mb-2">
+                        <img src="/favicon.png" id="home-icon" class="h-20 mr-4 transition-all duration-1000 ease-in-out transform scale-0">
+                        <h1 id="home-title" class="overflow-hidden text-5xl font-bold text-center transition-all duration-1000 ease-in-out">MC&nbsp;Wardrobe</h1>
                     </div>
-                    <div id="auth-version"></div>
+                    <h1 id="home-subtitle" class="h-0 overflow-hidden text-3xl text-center transition-all duration-1000 ease-in-out">"Conformity is the death of individuality."</h1>
+
+                    <div id="home-version"></div>
                 </div>
                 
                 <div id="builder" class="relative flex flex-row items-center justify-center flex-1 hidden h-full max-h-full overflow-hidden bg-gray-200 rounded-lg">
@@ -205,9 +232,9 @@
                 <div id="settings" class="flex flex-col items-center justify-start flex-1 hidden h-full max-h-full p-3 bg-gray-200 rounded-lg">
                     <h1 class="w-full p-2 mb-3 text-3xl font-bold text-center text-white bg-blue-400">Settings</h1>
                     
-                    <div class="inline-block w-full p-3 mb-3">
+                    <!-- <div class="inline-block w-full p-3 mb-3">
                         <h3 class="text-xl text-center">You're signed in as <span id="loggedinusername2" class="font-bold"></span>. <a href="javascript:logout()" class="underline">Log Out</a></h3>
-                    </div>
+                    </div> -->
 
                     <div class="inline-block w-full p-3 mb-3">
                         <h1 class="w-full pb-2 mb-3 text-2xl font-bold text-center border-b-2 border-gray-700">Clear Data</h1>
@@ -217,20 +244,20 @@
                         </div>
                     </div>
 
-                    <div class="flex flex-col items-center justify-start w-full p-3 mb-3">
+                    <!-- <div class="flex flex-col items-center justify-start w-full p-3 mb-3">
                         <h1 class="w-full pb-2 mb-3 text-2xl font-bold text-center border-b-2 border-gray-700">Updates</h1>
                         <div id="settings-version" class="text-xl"></div>
-                        <a id="updatebtn" href="https://github.com/IzMichael/mc-wardrobe/releases/latest" class="hidden w-1/2 p-2 px-3 mx-auto text-center bg-green-400 rounded-lg external-link">Please download the latest version</a>
-                    </div>
+                        <a id="updatebtn" href="https://github.com/IzMichael/mc-wardrobe/releases/latest" class="hidden w-1/2 p-2 px-3 mx-auto text-center bg-green-400 rounded-lg">Please download the latest version</a>
+                    </div> -->
 
-                    <a href="https://izmichael.xyz" class="w-full p-3 text-xl text-center underline justify-self-end external-link">&copy; IzMichael 2021</a>
+                    <a href="https://izmichael.xyz" class="w-full p-3 text-xl text-center underline justify-self-end">&copy; IzMichael 2021</a>
                 </div>
 
-                <div id="help" class="flex flex-col items-center justify-start flex-1 hidden h-full max-h-full p-3 bg-gray-200 rounded-lg">
+                <!-- <div id="help" class="flex flex-col items-center justify-start flex-1 hidden h-full max-h-full p-3 bg-gray-200 rounded-lg">
                     <h1 class="w-full p-2 mb-3 text-3xl font-bold text-center text-white bg-blue-400">Help</h1>
                     <iframe src="https://www.youtube.com/embed/kG4cxuBCxRA?rel=0" class="w-full" width="1920" height="1080" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen></iframe>
-                    <p class="mt-2 text-xl"><a href="https://github.com/IzMichael/mc-wardrobe/issues" class="underline external-link">Found a Bug? Want to Suggest a Feature?</a> - <a href="https://github.com/IzMichael/mc-wardrobe/discussions" class="underline external-link">Need Help? Want to Show-Off a Skin?</a></p>
-                </div>
+                    <p class="mt-2 text-xl"><a href="https://github.com/IzMichael/mc-wardrobe/issues" class="underline">Found a Bug? Want to Suggest a Feature?</a> - <a href="https://github.com/IzMichael/mc-wardrobe/discussions" class="underline">Need Help? Want to Show-Off a Skin?</a></p>
+                </div> -->
 
                 <div id="stealer" class="flex flex-row items-center justify-start flex-1 hidden h-full max-h-full p-3 bg-gray-200 rounded-lg">
                     <div class="flex flex-col items-center justify-around flex-1 mx-16 mr-32 h-1/2">
@@ -255,13 +282,12 @@
                         <progress id="uploadbar" value="0" max="2" class="w-full h-0 transition-all duration-300 ease-in-out rounded-lg"></progress>
                         <input id="outfitname" class="h-0 overflow-hidden text-center bg-transparent border-gray-400 rounded-md">
                         
-                        <button onclick="nameoutfit()" class="w-full p-2 px-3 bg-green-400 rounded-lg" id="saveoutfit-btn">Save Outfit</button>
-                        
-                        <div class="flex flex-row items-center justify-between w-full mt-1">
-                            <button onclick="useskin()" class="flex-1 p-2 px-3 bg-green-400 rounded-lg">Use Skin</button>
+                        <div class="flex flex-row items-center justify-between w-full">
+                            <!-- <button onclick="useskin()" class="flex-1 p-2 px-3 bg-green-400 rounded-lg">Use Skin</button> -->
+                            <button onclick="nameoutfit()" class="flex-1 p-2 px-3 bg-green-400 rounded-lg" id="saveoutfit-btn">Save Outfit</button>
                             <button onclick="exportskin()" class="flex-1 p-2 px-3 ml-1 bg-green-400 rounded-lg">Export Skin</button>
                         </div>
-                        <a href="https://izmichael.xyz" class="flex-1 mt-1 text-center underline text-md justify-self-end external-link">&copy; IzMichael 2021 - izmichael.xyz</a>
+                        <a href="https://izmichael.xyz" class="flex-1 mt-1 text-center underline text-md justify-self-end">&copy; IzMichael 2021 - izmichael.xyz</a>
                     </div>
                 </div>
             </div>
@@ -310,7 +336,6 @@
         <img id="skin" class="hidden">
         <canvas id="pngrendercanvas" class="hidden"></canvas>
 
-        <script src="./windowControls.js"></script>
         <script src="./assets/js/skinview3d.bundle.js"></script>
         <script src="./assets/js/main.js"></script>
     </body>
