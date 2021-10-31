@@ -120,16 +120,11 @@ const regions = {
     }
 };
 var skinViewer;
-var signedin = false;
-var authdata = JSON.parse(localStorage.getItem('authdata')) || null;
 
 var parts;
 var outfits;
 
 var selectedpart;
-
-externalTags()
-versioning()
 
 // Files
 
@@ -194,147 +189,49 @@ async function init() {
     await sleep(0.5)
 
     listoutfits();
+
+    //
+
+    intro()
 }
 
 init()
 
+// Intro
+
+async function intro() {
+    page('home');
+
+    await sleep(1)
+
+    document.getElementById('home-icon').classList.remove('scale-0');
+    await sleep(1.1)
+    document.getElementById('home-title').classList.add('full');
+    await sleep(0.9)
+    document.getElementById('home-subtitle').classList.add('h-8');
+    document.getElementById('home-subtitle').classList.remove('h-0');
+}
+
 // Pages
 
 var buttons = true;
-page('home');
 
 async function page(id) {
     document.getElementById('wrapper').classList.remove('hidden')
     if (buttons) {
-        // if (signedin || id == 'auth') {
-            const pages = ['home', 'builder', 'library', 'settings', 'help', 'stealer'];
+        const pages = ['home', 'builder', 'library', 'settings', 'stealer'];
 
-            for (let i = 0; i < pages.length; i++) {
-                const page = pages[i];
-                document.getElementById(page).classList.add('hidden');
-                document.getElementById(page + 'btn').classList.remove('selected');
-            }
+        for (let i = 0; i < pages.length; i++) {
+            const page = pages[i];
+            document.getElementById(page).classList.add('hidden');
+            document.getElementById(page + 'btn').classList.remove('selected');
+        }
 
-            document.getElementById(id).classList.remove('hidden');
-            document.getElementById(id + 'btn').classList.add('selected');
-        // }
+        document.getElementById(id).classList.remove('hidden');
+        document.getElementById(id + 'btn').classList.add('selected');
     }
     await sleep(1)
     document.getElementById('wrapper').classList.remove('opacity-0');
-}
-
-// API Authentication
-
-// auth()
-if (authdata) {
-    document.getElementById('loggedinusername').innerHTML = authdata.name;
-    document.getElementById('loggedinusername2').innerHTML = authdata.name;
-    document.getElementById('loggedinemail').innerHTML = authdata.user.username;
-}
-
-async function msAuth(msaccess) {
-    // Step 4
-    var req4 = await fetch('https://user.auth.xboxlive.com/user/authenticate', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            'Properties': {
-                'AuthMethod': 'RPS',
-                'SiteName': 'user.auth.xboxlive.com',
-                'RpsTicket': 'd=' + msaccess
-            },
-            'RelyingParty': 'http://auth.xboxlive.com',
-            'TokenType': 'JWT'
-        })
-    }).then(res => {return res.json()});
-
-    // Step 5
-    var req5 = await fetch('https://xsts.auth.xboxlive.com/xsts/authorize', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            'Properties': {
-                'SandboxId': 'RETAIL',
-                'UserTokens': [
-                    req4.Token
-                ]
-            },
-            'RelyingParty': 'rp://api.minecraftservices.com/',
-            'TokenType': 'JWT'
-        })
-    }).then(res => {return res.json()});
-
-    // Step 6
-    var req6 = await fetch('https://api.minecraftservices.com/authentication/login_with_xbox', {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Origin': 'http://localhost:5500/'
-        },
-        body: JSON.stringify({
-            'identityToken': `XBL3.0 x=${req5.DisplayClaims.xui[0].uhs};${req5.Token}`
-        })
-    }).then(res => {return res.json()});
-
-    // Step 7
-    var req7 = await fetch('https://api.minecraftservices.com/entitlements/mcstore', {
-        method: 'GET',
-        headers: {
-            'Authorization': 'Bearer ' + req6.access_token
-        }
-    }).then(res => {return res.json()});
-
-    if (req7.items.length < 0) {
-        console.error('User does not own Minecraft Java')
-        return
-    }
-
-    // Step 8
-
-    var req8 = await fetch('https://api.minecraftservices.com/minecraft/profile', {
-        headers: {
-            'Authorization': 'Bearer ' + req6.access_token
-        }
-    }).then(res => {return res.json()});
-
-    authdata = req8
-
-    document.getElementById('username').innerHTML = req8.name;
-
-    let textures = await fetch('https://sessionserver.mojang.com/session/minecraft/profile/' + authdata.id).then(data => data.json()).then(res => {
-            return res.properties[0].value
-        })
-    let skin = JSON.parse(atob(textures)).textures.SKIN.url;
-    render(skin);
-
-    console.log(req8)
-}
-
-function logout() {
-    authdata = null;
-    localStorage.setItem('authdata', null);
-    signedin = false;
-
-    document.getElementById('wb-heading-1').classList.add('hidden');
-    document.getElementById('wb-heading-2').classList.add('hidden');
-    document.getElementById('wb-heading-3').classList.add('hidden');
-
-    document.getElementById('new-heading-1').classList.remove('hidden');
-    document.getElementById('new-heading-2').classList.remove('hidden');
-
-    page('auth');
-
-    document.getElementById('loggedinusername').innerHTML = '';
-    document.getElementById('loggedinusername2').innerHTML = '';
-    document.getElementById('loggedinemail').innerHTML = '';
 }
 
 // Skin Render
@@ -474,7 +371,7 @@ function listparts() {
 
         for (let i = 0; i < parts.main[part].length; i++) {
             const element = parts.main[part][i];
-            html += '<img title="Main ' + part + '" src="' + element + '" class="cursor-pointer mx-auto w-16 h-16 border-2 border-black" onclick="loadb64(\'' + element + '\')" oncontextmenu="deletepart(\'' + part + '\', \'main\', ' + i + ')" onmouseover="render3d(\'' + element + '\')" onmouseout="render3d(document.getElementById(\'canvas\').toDataURL())">'
+            html += '<img title="Main ' + part + '" src="' + element + '" class="cursor-pointer mx-auto w-16 h-16 border-2 border-black" onclick="loadb64(\'' + element + '\')" oncontextmenu="deletepart(\'' + part + '\', \'main\', ' + i + ');return false;" onmouseover="render3d(\'' + element + '\')" onmouseout="render3d(document.getElementById(\'canvas\').toDataURL())">'
         };
 
         document.getElementById('main-' + part + '-grid').innerHTML = html;
@@ -483,7 +380,7 @@ function listparts() {
 
         for (let i = 0; i < parts.outer[part].length; i++) {
             const element = parts.outer[part][i];
-            html += '<img title="Outer ' + part + '" src="' + element + '" class="cursor-pointer mx-auto w-16 h-16 border-2 border-black" onclick="loadb64(\'' + element + '\')" oncontextmenu="deletepart(\'' + part + '\', \'outer\', ' + i + ')" onmouseover="render3d(\'' + element + '\')" onmouseout="render3d(document.getElementById(\'canvas\').toDataURL())">'
+            html += '<img title="Outer ' + part + '" src="' + element + '" class="cursor-pointer mx-auto w-16 h-16 border-2 border-black" onclick="loadb64(\'' + element + '\')" oncontextmenu="deletepart(\'' + part + '\', \'outer\', ' + i + ');return false;" onmouseover="render3d(\'' + element + '\')" onmouseout="render3d(document.getElementById(\'canvas\').toDataURL())">'
         };
 
         document.getElementById('outer-' + part + '-grid').innerHTML = html;
@@ -580,7 +477,7 @@ async function listoutfits() {
         build(outfit.image)
         await sleep(0.025)
         var pngrender = document.getElementById('pngrendercanvas').toDataURL();
-        var text = '<div class="flex-col cursor-pointer justify-start items-center inline-flex w-full flex-none border border-black p-1" onclick="loadoutfit(\'' + outfit.image + '\')" onmouseover="render3d(\'' + outfit.image + '\')" onmouseout="render3d(document.getElementById(\'canvas\').toDataURL())" oncontextmenu="deleteoutfit(\'' + i + '\')"><marquee class="text-lg bg-blue-100 font-mono-2 w-full text-center truncate p-3 mb-3" scrollAmount="3">' + outfit.name + '</marquee><img src="' + pngrender + '" class="w-full" title="' + outfit.name + '"></img></div>';
+        var text = '<div class="flex-col cursor-pointer justify-start items-center inline-flex w-full flex-none border border-black p-1" onclick="loadoutfit(\'' + outfit.image + '\')" onmouseover="render3d(\'' + outfit.image + '\')" onmouseout="render3d(document.getElementById(\'canvas\').toDataURL())" oncontextmenu="deleteoutfit(\'' + i + '\');return false;"><marquee class="text-lg bg-blue-100 font-mono-2 w-full text-center truncate p-3 mb-3" scrollAmount="3">' + outfit.name + '</marquee><img src="' + pngrender + '" class="w-full" title="' + outfit.name + '"></img></div>';
         if (outfit.name.length < 12) {
             text = text.split('marquee').join('h3');
         }
@@ -614,12 +511,11 @@ async function readFiles() {
     for (let i = 0; i < fileInput.files.length; i++) {
         const file = fileInput.files[i]
 
+        console.log(file)
+
         document.getElementById('outfitname').value = file.name.replace('.png', '');
 
-        var b64 = 'data:image/png;base64,' + fs.readFileSync(file.path, {
-            encoding: 'base64',
-            flag: 'r'
-        });
+        var b64 = URL.createObjectURL(file);
         await deconstructskin(b64);
         console.log('Done file')
         percentage += increment
@@ -697,56 +593,56 @@ async function runsteal() {
 
 // Use Skin
 
-async function useskin() {
-    document.getElementById('uploadbar').value = 0;
-    document.getElementById('uploadbar').classList.remove('h-0');
-    document.getElementById('uploadbar').classList.add('h-2', 'mb-3');
+// async function useskin() {
+//     document.getElementById('uploadbar').value = 0;
+//     document.getElementById('uploadbar').classList.remove('h-0');
+//     document.getElementById('uploadbar').classList.add('h-2', 'mb-3');
 
-    await sleep(1)
+//     await sleep(1)
 
-    var skin = document.getElementById('canvas').toDataURL();
-    render3d(skin);
+//     var skin = document.getElementById('canvas').toDataURL();
+//     render3d(skin);
 
-    let imgurl;
+//     let imgurl;
 
-    var formdata = new FormData();
-    formdata.append('image', skin.replace('data:image/png;base64,', ''));
+//     var formdata = new FormData();
+//     formdata.append('image', skin.replace('data:image/png;base64,', ''));
 
-    var requestOptions = {
-        method: 'POST',
-        body: formdata,
-        redirect: 'follow'
-    };
+//     var requestOptions = {
+//         method: 'POST',
+//         body: formdata,
+//         redirect: 'follow'
+//     };
 
-    fetch('https://api.imgbb.com/1/upload?key=3076ddb961e0a94b58dd7a80d908c76e&expiration=60', requestOptions)
-        .then(res => res.json())
-        .then(json => imgurl = json.data.url);
+//     fetch('https://api.imgbb.com/1/upload?key=3076ddb961e0a94b58dd7a80d908c76e&expiration=60', requestOptions)
+//         .then(res => res.json())
+//         .then(json => imgurl = json.data.url);
 
-    document.getElementById('uploadbar').value += 1;
+//     document.getElementById('uploadbar').value += 1;
 
-    await sleep(1)
+//     await sleep(1)
 
-    fetch('https://api.minecraftservices.com/minecraft/profile/skins', {
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + authdata.accessToken,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                'variant': 'slim',
-                'url': imgurl
-            })
-        })
-        .then(res => res.json())
-        .then(json => console.log(json));
+//     fetch('https://api.minecraftservices.com/minecraft/profile/skins', {
+//             method: 'POST',
+//             headers: {
+//                 'Authorization': 'Bearer ' + authdata.accessToken,
+//                 'Content-Type': 'application/json'
+//             },
+//             body: JSON.stringify({
+//                 'variant': 'slim',
+//                 'url': imgurl
+//             })
+//         })
+//         .then(res => res.json())
+//         .then(json => console.log(json));
 
-    document.getElementById('uploadbar').value += 1;
+//     document.getElementById('uploadbar').value += 1;
 
-    await sleep(1)
+//     await sleep(1)
 
-    document.getElementById('uploadbar').classList.add('h-0');
-    document.getElementById('uploadbar').classList.remove('h-2', 'mb-3');
-}
+//     document.getElementById('uploadbar').classList.add('h-0');
+//     document.getElementById('uploadbar').classList.remove('h-2', 'mb-3');
+// }
 
 function exportskin() {
     var link = document.createElement('a');
@@ -944,27 +840,6 @@ function scaleImage(imageData, context, dx, dy, scale) {
 
 // Version Control
 
-const packagejson = {'version':'1.0.0'}
-
-const version = 'v' + packagejson.version;
-
-async function versioning() {
-    const authtext = document.getElementById('home-version');
-    const settingstext = document.getElementById('settings-version');
-    fetch('https://api.github.com/repos/IzMichael/mc-wardrobe/releases/latest')
-        .then(response => response.json())
-        .then(data => {
-            if (version >= data.tag_name) {
-                authtext.innerHTML = 'You are on the latest version, Version ' + version
-                settingstext.innerHTML = 'You are on the latest version, Version ' + version
-            } else {
-                authtext.innerHTML = '<p class="text-center mb-2">The latest version is ' + data.tag_name + '. You are on version ' + version + '</p><p class="text-center">Please download the latest version. You can do that in the Settings tab.</p>';
-                settingstext.innerHTML = '<p class="text-center mb-2">The latest version is ' + data.tag_name + '. You are on version ' + version + '</p>';
-                document.getElementById('updatebtn').classList.remove('hidden');
-            }
-        });
-}
-
 // Extras
 
 function sleep(s) {
@@ -980,6 +855,11 @@ function uniquify(array) {
     }
 
     index = newarray.indexOf('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAo0lEQVR4Xu3VMRXEMBDE0ASI+QMzkByCe9uvflpXlqXM+8S/N37/BwAGxAlIIC6An6AEJBAnIIG4AFZAAhKIE5BAXAArIAEJxAlIIC6AFZCABOIEJBAXwApIQAJxAhKIC2AFJCCBOAEJxAWwAhKQQJyABOIC7F+Be+93zvlrugQkECcggbgA+1dgemAJTIS2nzNg+wtP92PARGj7OQO2v/B0vx8czwRBQWp0ZwAAAABJRU5ErkJggg==');
+    if (index > -1) {
+        newarray.splice(index, 1);
+    }
+
+    index = newarray.indexOf('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAKNJREFUeF7t1TEVxDAQxNAEiPkDM5Acgnvbr35aV5alzPvEvzd+/wcABsQJSCAugJ+gBCQQJyCBuABWQAISiBOQQFwAKyABCcQJSCAugBWQgATiBCQQF8AKSEACcQISiAtgBSQggTgBCcQFsAISkECcgATiAuxfgXvvd875a7oEJBAnIIG4APtXYHpgCUyEtp8zYPsLT/djwERo+zkDtr/wdL8fHM8EQUFqdGcAAAAASUVORK5CYII=');
     if (index > -1) {
         newarray.splice(index, 1);
     }
@@ -1023,12 +903,4 @@ function checkOverflow(el) {
     el.style.overflow = curOverflow;
 
     return isOverflowing;
-}
-
-function externalTags() {
-    var aTags = document.getElementsByClassName('external-link')
-    for (var i = 0; i < aTags.length; i++) {
-        aTags[i].setAttribute("onclick", "require(\"electron\").shell.openExternal('" + aTags[i].href + "')");
-        aTags[i].href = "#";
-    }
 }

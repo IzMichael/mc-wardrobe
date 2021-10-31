@@ -10,25 +10,17 @@
         <link rel="stylesheet" href="./assets/styles.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.49/dist/themes/light.css">
         <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.49/dist/shoelace.js"></script>
-        
-        <script src="./assets/js/msal.min.js"></script>
-        <script src="./assets/js/signin.js"></script>
-        <script src="./assets/js/jwt_decoder.js"></script>
     </head>
 
     <body id="body" class="flex flex-col w-full h-screen overflow-hidden">
         <div id="wrapper" class="flex flex-col items-center justify-start flex-1 hidden w-full p-5 overflow-hidden transition-opacity ease-in-out opacity-0 duration-900">
             <div class="flex flex-row items-center flex-none w-full mb-5 overflow-hidden">
                 <div id="menu" class="flex flex-row items-center flex-1 overflow-hidden bg-gray-200 rounded-lg justify-evenly">
-                    <div class="flex flex-col items-center justify-center flex-1 h-full p-3 border-r border-black select-none">
-                        <p class="flex-1 font-bold font-stnd" id="username"></p>
-                        <a class="flex-1 font-bold font-stnd" onclick="sign_in()">Sign In</a>
-                    </div>
                     <p class="menuButton" id="homebtn" onclick="page('home')">Home</p>
                     <p class="menuButton" id="builderbtn" onclick="page('builder')">Builder</p>
                     <p class="menuButton" id="librarybtn" onclick="page('library')">Library</p>
                     <p class="menuButton" id="settingsbtn" onclick="page('settings')">Settings</p>
-                    <p class="menuButton" id="helpbtn" onclick="page('help')">Help</p>
+                    <!-- <p class="menuButton" id="helpbtn" onclick="page('help')">Help</p> -->
                 </div>
             </div>
 
@@ -87,8 +79,11 @@
             
             <div id="contentwrapper" class="relative flex flex-row items-center justify-center flex-1 w-full min-h-0">
                 <div id="home" class="flex flex-col items-center justify-center flex-1 h-full p-3 bg-gray-200 rounded-lg">
-                    <h1 class="text-5xl text-center">Welcome!</h1>
-                    <h3 class="text-2xl text-center">Please sign in below.</h3>
+                    <div class="flex flex-row items-center justify-center mb-2">
+                        <img src="/favicon.png" id="home-icon" class="h-20 mr-4 transition-all duration-1000 ease-in-out transform scale-0">
+                        <h1 id="home-title" class="overflow-hidden text-5xl font-bold text-center transition-all duration-1000 ease-in-out">MC&nbsp;Wardrobe</h1>
+                    </div>
+                    <h1 id="home-subtitle" class="h-0 overflow-hidden text-3xl text-center transition-all duration-1000 ease-in-out">"Conformity is the death of individuality."</h1>
 
                     <div id="home-version"></div>
                 </div>
@@ -237,9 +232,9 @@
                 <div id="settings" class="flex flex-col items-center justify-start flex-1 hidden h-full max-h-full p-3 bg-gray-200 rounded-lg">
                     <h1 class="w-full p-2 mb-3 text-3xl font-bold text-center text-white bg-blue-400">Settings</h1>
                     
-                    <div class="inline-block w-full p-3 mb-3">
+                    <!-- <div class="inline-block w-full p-3 mb-3">
                         <h3 class="text-xl text-center">You're signed in as <span id="loggedinusername2" class="font-bold"></span>. <a href="javascript:logout()" class="underline">Log Out</a></h3>
-                    </div>
+                    </div> -->
 
                     <div class="inline-block w-full p-3 mb-3">
                         <h1 class="w-full pb-2 mb-3 text-2xl font-bold text-center border-b-2 border-gray-700">Clear Data</h1>
@@ -249,20 +244,20 @@
                         </div>
                     </div>
 
-                    <div class="flex flex-col items-center justify-start w-full p-3 mb-3">
+                    <!-- <div class="flex flex-col items-center justify-start w-full p-3 mb-3">
                         <h1 class="w-full pb-2 mb-3 text-2xl font-bold text-center border-b-2 border-gray-700">Updates</h1>
                         <div id="settings-version" class="text-xl"></div>
-                        <a id="updatebtn" href="https://github.com/IzMichael/mc-wardrobe/releases/latest" class="hidden w-1/2 p-2 px-3 mx-auto text-center bg-green-400 rounded-lg external-link">Please download the latest version</a>
-                    </div>
+                        <a id="updatebtn" href="https://github.com/IzMichael/mc-wardrobe/releases/latest" class="hidden w-1/2 p-2 px-3 mx-auto text-center bg-green-400 rounded-lg">Please download the latest version</a>
+                    </div> -->
 
-                    <a href="https://izmichael.xyz" class="w-full p-3 text-xl text-center underline justify-self-end external-link">&copy; IzMichael 2021</a>
+                    <a href="https://izmichael.xyz" class="w-full p-3 text-xl text-center underline justify-self-end">&copy; IzMichael 2021</a>
                 </div>
 
-                <div id="help" class="flex flex-col items-center justify-start flex-1 hidden h-full max-h-full p-3 bg-gray-200 rounded-lg">
+                <!-- <div id="help" class="flex flex-col items-center justify-start flex-1 hidden h-full max-h-full p-3 bg-gray-200 rounded-lg">
                     <h1 class="w-full p-2 mb-3 text-3xl font-bold text-center text-white bg-blue-400">Help</h1>
                     <iframe src="https://www.youtube.com/embed/kG4cxuBCxRA?rel=0" class="w-full" width="1920" height="1080" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen></iframe>
-                    <p class="mt-2 text-xl"><a href="https://github.com/IzMichael/mc-wardrobe/issues" class="underline external-link">Found a Bug? Want to Suggest a Feature?</a> - <a href="https://github.com/IzMichael/mc-wardrobe/discussions" class="underline external-link">Need Help? Want to Show-Off a Skin?</a></p>
-                </div>
+                    <p class="mt-2 text-xl"><a href="https://github.com/IzMichael/mc-wardrobe/issues" class="underline">Found a Bug? Want to Suggest a Feature?</a> - <a href="https://github.com/IzMichael/mc-wardrobe/discussions" class="underline">Need Help? Want to Show-Off a Skin?</a></p>
+                </div> -->
 
                 <div id="stealer" class="flex flex-row items-center justify-start flex-1 hidden h-full max-h-full p-3 bg-gray-200 rounded-lg">
                     <div class="flex flex-col items-center justify-around flex-1 mx-16 mr-32 h-1/2">
@@ -287,13 +282,12 @@
                         <progress id="uploadbar" value="0" max="2" class="w-full h-0 transition-all duration-300 ease-in-out rounded-lg"></progress>
                         <input id="outfitname" class="h-0 overflow-hidden text-center bg-transparent border-gray-400 rounded-md">
                         
-                        <button onclick="nameoutfit()" class="w-full p-2 px-3 bg-green-400 rounded-lg" id="saveoutfit-btn">Save Outfit</button>
-                        
-                        <div class="flex flex-row items-center justify-between w-full mt-1">
-                            <button onclick="useskin()" class="flex-1 p-2 px-3 bg-green-400 rounded-lg">Use Skin</button>
+                        <div class="flex flex-row items-center justify-between w-full">
+                            <!-- <button onclick="useskin()" class="flex-1 p-2 px-3 bg-green-400 rounded-lg">Use Skin</button> -->
+                            <button onclick="nameoutfit()" class="flex-1 p-2 px-3 bg-green-400 rounded-lg" id="saveoutfit-btn">Save Outfit</button>
                             <button onclick="exportskin()" class="flex-1 p-2 px-3 ml-1 bg-green-400 rounded-lg">Export Skin</button>
                         </div>
-                        <a href="https://izmichael.xyz" class="flex-1 mt-1 text-center underline text-md justify-self-end external-link">&copy; IzMichael 2021 - izmichael.xyz</a>
+                        <a href="https://izmichael.xyz" class="flex-1 mt-1 text-center underline text-md justify-self-end">&copy; IzMichael 2021 - izmichael.xyz</a>
                     </div>
                 </div>
             </div>
