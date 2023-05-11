@@ -1,0 +1,40 @@
+{
+    "name": "sveltekit",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "vite dev --port 5000 --host",
+        "build": "vite build",
+        "preview": "vite preview --port 5000 --host",
+        "test": "playwright test",
+        "lint": "prettier --plugin-search-dir . --check . && eslint .",
+        "format": "prettier --plugin-search-dir . --write ."
+    },
+    "devDependencies": {
+        "@playwright/test": "^1.28.1",
+        "@sveltejs/adapter-auto": "^1.0.0",
+        "@sveltejs/adapter-node": "^1.0.0",
+        "@sveltejs/adapter-static": "^1.0.0",
+        "@sveltejs/kit": "^1.0.0",
+        "autoprefixer": "^10.4.13",
+        "eslint": "^8.31.0",
+        "eslint-config-prettier": "^8.6.0",
+        "eslint-plugin-svelte": "^2.14.1",
+        "eslint-plugin-tailwindcss": "^3.8.0",
+        "postcss": "^8.4.20",
+        "prettier": "^2.8.0",
+        "prettier-plugin-svelte": "^2.9.0",
+        "svelte": "^3.55.0",
+        "tailwindcss": "^3.2.4",
+        "vite": "^4.0.0"
+    },
+    "type": "module",
+    "dependencies": {
+        "@simonwep/pickr": "^1.8.2",
+        "@south-paw/typeface-minecraft": "^1.0.0",
+        "@zerodevx/svelte-toast": "1.0.0-rc.1",
+        "colord": "^2.9.3",
+        "skinview3d": "^3.0.0-alpha.1",
+        "vanilla-picker": "^2.12.1"
+    }
+}
